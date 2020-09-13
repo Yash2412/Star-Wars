@@ -16,6 +16,10 @@ var config = {
 };
 var player1;
 var cursors;
+var missilesOfPlayer1;
+var fireInst;
+var lastFired=0;
+var noOfRad=3.14/180;
 
 var game = new Phaser.Game(config);
 function preload()
@@ -34,15 +38,58 @@ function create() {
     image.setScale(scale).setScrollFactor(0);
     //player1
 
-    player1 = this.physics.add.image(400, 300, 'player1');
+    player1 = this.physics.add.image(400, 300, 'player1').setDepth(1);
     player1.scaleY=.7 
     player1.scaleX=.8
     player1.setDamping(true);
     player1.setDrag(0.99);
     player1.setMaxVelocity(200);
+    //Missiles
+    var Missile = new Phaser.Class({
+
+        Extends: Phaser.GameObjects.Image,
+
+        initialize:
+
+        function Missile (scene)
+        {
+            Phaser.GameObjects.Image.call(this, scene, 0, 0, 'missile');
+
+            this.speed = Phaser.Math.GetSpeed(400, 1);
+            this.scaleX=0.5;
+            this.scaleY=0.4;
+        },
+
+        fire: function (x, y,z)
+        {
+            this.setPosition(x, y);
+            this.setAngle(z);
+            
+            this.setActive(true);
+            this.setVisible(true);
+        },
+
+        update: function (time, delta)
+        {
+            this.y += this.speed * delta*Math.sin(this.angle*noOfRad);
+            this.x+=this.speed*delta*Math.cos(this.angle*noOfRad);
+
+            
+        }
+
+    });
+    missilesOfPlayer1 = this.add.group({
+        classType: Missile,
+        maxSize: 5,
+        runChildUpdate: true
+    });
+
 
     //  Game input for movments
     cursors = this.input.keyboard.createCursorKeys();
+    fireInst = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+    
     
 
 
@@ -50,7 +97,7 @@ function create() {
 
 
 }
-function update()
+function update(time)
 {   //player1 controling
     if (cursors.up.isDown)
     {
@@ -75,5 +122,17 @@ function update()
     {
         player1.body.angularVelocity = 0;
     }
+    //bullet controlling
+    if (fireInst.isDown && time > lastFired)
+    {
+        var missile = missilesOfPlayer1.get();
 
+        if (missile)
+        {
+            missile.fire(player1.x, player1.y,player1.angle);
+
+            lastFired = time + 50;
+        }
+    }
+    
 }
