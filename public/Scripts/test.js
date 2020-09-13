@@ -1,6 +1,6 @@
 var config = {
     type: Phaser.AUTO,
-    width: screen.width-100,
+    width: screen.width-80,
     height: screen.height-120,
     physics: {
         default: 'arcade',
@@ -18,11 +18,16 @@ var config = {
 var game = new Phaser.Game(config);
 function preload()
 {
-    this.load.image('background','./assets/space.jpg');
+    this.load.image('map','./assets/space.jpg');
 }
 
 function create() {
-    this.add.image(0,0,'background');
+    let image = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'map');
+    let scaleX = this.cameras.main.width / image.width;
+    let scaleY = this.cameras.main.height / image.height;
+    let scale = Math.max(scaleX, scaleY);
+    image.setScale(scale).setScrollFactor(0);
+
 }
 function update()
 {
