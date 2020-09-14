@@ -21,7 +21,7 @@ var missilesOfPlayer1;
 var fireInst;
 var lastFired=0;
 var noOfRad=3.1415926535801/180;
-
+var red,purple,green,yellow,blue,brown;
 var game = new Phaser.Game(config);
 function preload()
 {
@@ -29,15 +29,53 @@ function preload()
     this.load.image('player1','./assets/player.png');
     this.load.image('missile','./assets/missile.png');
     this.load.image('player2','./assets/enemy.png');
+    this.load.image('red','./assets/red.png');
+    this.load.image('blue','./assets/blue.png');
+    this.load.image('yellow','./assets/yellow.png');
+    this.load.image('green','./assets/green.png');
+    this.load.image('purple','./assets/purple.png');
+    this.load.image('brown','./assets/brown.png');
 }
 
 function create() {
     //streching background
+    
     let image = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'map');
     let scaleX = this.cameras.main.width / image.width;
     let scaleY = this.cameras.main.height / image.height;
     let scale = Math.max(scaleX, scaleY);
     image.setScale(scale).setScrollFactor(0);
+    //stones testing 
+    red=this.physics.add.image(200,150,'red');
+    red.scaleX=1.6
+    red.scaleY=1.6
+    red.setMaxVelocity(0)
+
+    blue=this.physics.add.image(1025,600,'blue');
+    blue.scaleX=1.6
+    blue.scaleY=1.6 
+    blue.setMaxVelocity(0)
+    
+    green=this.physics.add.image(1275,350,'green');
+    green.scaleY=1.6
+    green.scaleX=1.6
+    green.setMaxVelocity(0)
+    purple=this.physics.add.image(900,200,'purple');
+    purple.scaleX=1.6
+    purple.scaleY=1.6
+    purple.setMaxVelocity(0)
+
+    yellow=this.physics.add.image(300,600,'yellow');
+    yellow.scaleY=1.6
+    yellow.scaleX=1.6
+    yellow.setMaxVelocity(0)
+    
+    brown=this.physics.add.image(600,350,'brown');
+    brown.scaleX=1.6
+    brown.scaleY=1.6
+    brown.setMaxVelocity(0)
+    
+    
     //player1
 
     player1 = this.physics.add.image(400, 300, 'player1').setDepth(1);
@@ -70,13 +108,13 @@ function create() {
             this.speed = Phaser.Math.GetSpeed(400, 1);
             this.scaleX=0.5;
             this.scaleY=0.4;
-            this.angle=0;
+            
         },
 
         fire: function (x, y,z)
         {
             this.setPosition(x, y);
-            this.angle=z;
+            this.setAngle(z);
             
             this.setActive(true);
             this.setVisible(true);
@@ -87,7 +125,7 @@ function create() {
             this.y += this.speed * delta*Math.sin(this.angle*noOfRad);
             this.x+=this.speed*delta*Math.cos(this.angle*noOfRad);
 
-            if ((this.y < -50||this.y>screen.height+50)||(this.x<-50||this.x>screen.width+50) )
+            if ((this.y < -50||this.y>screen.height)||(this.x<-50||this.x>screen.width) )
             {
                 this.setActive(false);
                 this.setVisible(false);
@@ -102,8 +140,15 @@ function create() {
         maxSize: 10,
         runChildUpdate: true
     });
-
-
+    // collision of player1 and stone
+    this.physics.add.collider(player1,red);
+    this.physics.add.collider(player1,green);
+    this.physics.add.collider(player1,brown);
+    this.physics.add.collider(player1,blue);
+    this.physics.add.collider(player1,yellow);
+    this.physics.add.collider(player1,purple);
+    // collision of bullet and stone
+    
     //  Game input for movments
     cursors = this.input.keyboard.createCursorKeys();
     fireInst = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -127,7 +172,7 @@ function update(time)
         {
             missile.fire(player1.x, player1.y,player1.angle);
 
-            lastFired = time + 60;
+            lastFired = time + 50;
         }
     }
     
@@ -156,7 +201,10 @@ function update(time)
     {
         player1.body.angularVelocity = 0;
     }
-    //player not go anywhere than screen
+    //player and stones not go anywhere than screen
     this.physics.world.wrap(player1, 0);
+    
+    
+    
     
 }
