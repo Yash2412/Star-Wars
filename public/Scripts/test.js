@@ -1,6 +1,6 @@
 var config = {
     type: Phaser.AUTO,
-    width: screen.width-80,
+    width: screen.width-10,
     height: screen.height-120,
     physics: {
         default: 'arcade',
@@ -130,12 +130,13 @@ function create() {
                 this.setActive(false);
                 this.setVisible(false);
             }
+            
 
             
         }
 
     });
-    missilesOfPlayer1 = this.add.group({
+    missilesOfPlayer1 = this.physics.add.group({
         classType: Missile,
         maxSize: 10,
         runChildUpdate: true
@@ -147,7 +148,7 @@ function create() {
     this.physics.add.collider(player1,blue);
     this.physics.add.collider(player1,yellow);
     this.physics.add.collider(player1,purple);
-    // collision of bullet and stone
+    
     
     //  Game input for movments
     cursors = this.input.keyboard.createCursorKeys();
@@ -161,6 +162,8 @@ function create() {
 
 
 }
+
+
 function update(time)
 
 {   //bullet controlling
@@ -203,8 +206,39 @@ function update(time)
     }
     //player and stones not go anywhere than screen
     this.physics.world.wrap(player1, 0);
+
+    // collision of bullet and stone
+    this.physics.world.collide(red,missilesOfPlayer1,function(m,missile){
+        missile.setVisible(false);
+        missile.setActive(false);
+    });
+    this.physics.world.collide(green,missilesOfPlayer1,function(m,missile){
+        missile.setVisible(false);
+        missile.setActive(false);
+    });
+    this.physics.world.collide(brown,missilesOfPlayer1,function(m,missile){
+        missile.setVisible(false);
+        missile.setActive(false);
+    });
+    this.physics.world.collide(blue,missilesOfPlayer1,function(m,missile){
+        missile.setVisible(false);
+        missile.setActive(false);
+    });
+    this.physics.world.collide(yellow,missilesOfPlayer1,function(m,missile){
+        missile.setVisible(false);
+        missile.setActive(false);
+    });
+    this.physics.world.collide(purple,missilesOfPlayer1,function(m,missile){
+        missile.setVisible(false);
+        missile.setActive(false);
+    });
+    
+
+
+    
     
     
     
     
 }
+
